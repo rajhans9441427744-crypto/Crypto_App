@@ -18,20 +18,30 @@ SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT", "BNBUSDT"]
 TIMEFRAMES = ["1m", "5m", "15m", "1h", "4h", "1d"]
 
 def fetch_single_candle(symbol, interval, limit=1000):
-    url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}"
+    # Use the official Binance Vision API which allows cloud server IPs
+    url = f"https://data-api.binance.vision/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}"
+    
     try:
-        res = requests.get(url, timeout=4).json()
+        res = requests.get(url, timeout=10).json()
+        
+        # If Binance still blocks it, it returns a dictionary error instead of a list of candles
         if not isinstance(res, list):
+            print(f"API Blocked or Error for {symbol}: {res}")
             return None
+            
         df = pd.DataFrame(res, columns=[
             "time", "open", "high", "low", "close", "volume",
             "close_time", "qav", "trades", "tb_base", "tb_quote", "ignore"
         ])
+        
         for col in ["open", "high", "low", "close", "volume"]:
             df[col] = df[col].astype(float)
+            
         df["time"] = df["time"].astype(int)
         return compute_technicals(df)
-    except Exception:
+        
+    except Exception as e:
+        print(f"Kline fetch error for {symbol}:", e)
         return None
 
 def fetch_derivatives_intel(symbol):
