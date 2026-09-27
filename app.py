@@ -31,6 +31,7 @@ def get_dashboard():
         }), 200
     return jsonify(data)
 
+# In app.py
 @app.route("/api/chart")
 def get_chart():
     symbol = request.args.get("symbol", "BTCUSDT").upper()
@@ -40,14 +41,10 @@ def get_chart():
         return jsonify([])
 
     records = []
-    for _, row in df.tail(300).iterrows():
-        # Ensure timestamp is an integer in seconds
-        t = int(row["time"])
-        if t > 1000000000000:
-            t = int(t / 1000)
-            
+    # Change .tail(150) to .tail(1000)
+    for _, row in df.tail(1000).iterrows():
         records.append({
-            "time": t,
+            "time": int(row["time"] / 1000),
             "open": float(row["open"]),
             "high": float(row["high"]),
             "low": float(row["low"]),
