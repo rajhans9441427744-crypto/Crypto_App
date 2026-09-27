@@ -1,0 +1,23 @@
+crypto-dashboard/
+│
+├── app.py                      # Starts background workers + exposes Flask REST API
+├── engine.py                   # Orchestrates threading and background loops
+├── cache.py                    # Thread-safe in-memory cache storage
+│
+├── indicators/
+│   ├── technicals.py           # EMA, MACD, RSI, ADX, ATR, VWAP, Supertrend
+│   └── smc.py                  # Order Blocks, FVG, BOS, Support & Resistance
+│
+├── strategy/
+│   └── ai_engine.py            # Trend scoring, probability matrix, trade setups
+│
+├── templates/
+│   └── dashboard.html          # HTML terminal interface
+│
+└── static/
+    ├── css/
+    │   └── terminal.css        # Dashboard styling
+    └── js/
+        └── terminal.js         # REST polling, TradingView chart, dynamic DOM rendering
+
+        rajhans9441427744-crypto

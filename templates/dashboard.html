@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTUM TERMINAL // PRO</title>
+    <link rel="stylesheet" href="/static/css/terminal.css">
+    <script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+
+    <!-- Header Navigation & Live Stats Bar -->
+    <header class="topbar">
+        <div class="brand">QUANTUM_TERMINAL <span class="version-tag">PRO v3.2</span></div>
+        <div class="header-metrics">
+            <div class="metric-group">
+                <span class="m-label">Selected Pair</span>
+                <select id="symbolSelect" class="cyber-select" onchange="switchSymbol(this.value)">
+                    <option value="BTCUSDT">BTC/USDT</option>
+                    <option value="ETHUSDT">ETH/USDT</option>
+                    <option value="SOLUSDT">SOL/USDT</option>
+                    <option value="XRPUSDT">XRP/USDT</option>
+                    <option value="BNBUSDT">BNB/USDT</option>
+                </select>
+            </div>
+            <div class="metric-group">
+                <span class="m-label">Mark Price</span>
+                <span id="navPrice" class="m-value mono bullish">$0.00</span>
+            </div>
+            <div class="metric-group">
+                <span class="m-label">24H Change</span>
+                <span id="navChange" class="m-value mono">0.00%</span>
+            </div>
+            <div class="metric-group">
+                <span class="m-label">Funding (8h / APR)</span>
+                <span id="navFunding" class="m-value mono cyan">-- / --</span>
+            </div>
+            <div class="metric-group">
+                <span class="m-label">Institutional Pricing</span>
+                <span id="navZone" class="m-value mono">ANALYZING...</span>
+            </div>
+            <div class="metric-group live-status">
+                <span class="pulse-dot"></span> <span class="mono cyan">STREAM ACTIVE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Grid Workspace -->
+    <main class="terminal-grid">
+        
+        <!-- Left Panel: Watchlist & Institutional Liquidity -->
+        <aside class="panel">
+            <div class="panel-header">Asset Screener</div>
+            <div class="panel-content" id="watchlist" style="max-height: 250px;">
+                <!-- Populated via JS -->
+            </div>
+
+            <div class="panel-header" style="border-top: 1px solid var(--border-color);">Smart Money Structure</div>
+            <div class="panel-content mono" style="font-size: 0.8rem;">
+                <div class="info-block">
+                    <span class="m-label">Structural Trend (15m)</span>
+                    <div id="smcStructure" class="cyan font-bold">Calculating...</div>
+                </div>
+                <div class="info-block">
+                    <span class="m-label">Equilibrium (50% Fib)</span>
+                    <div id="smcEquilibrium" class="mono">--</div>
+                </div>
+                <div class="info-block">
+                    <span class="m-label">Premium Supply (FVG)</span>
+                    <div id="smcFVGTop" class="bearish">--</div>
+                </div>
+                <div class="info-block">
+                    <span class="m-label">Discount Demand (FVG)</span>
+                    <div id="smcFVGBottom" class="bullish">--</div>
+                </div>
+                <div class="info-block">
+                    <span class="m-label">Institutional Order Blocks</span>
+                    <div id="smcOB">-- Active</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Panel: Interactive Chart & Multi-Timeframe Matrix -->
+        <section class="panel chart-section">
+            <div class="chart-top-bar">
+                <span class="panel-title">Price Action Engine</span>
+                <div class="timeframe-buttons">
+                    <button class="tf-btn" onclick="switchInterval('1m')">1M</button>
+                    <button class="tf-btn" onclick="switchInterval('5m')">5M</button>
+                    <button class="tf-btn active" onclick="switchInterval('15m')">15M</button>
+                    <button class="tf-btn" onclick="switchInterval('1h')">1H</button>
+                    <button class="tf-btn" onclick="switchInterval('4h')">4H</button>
+                    <button class="tf-btn" onclick="switchInterval('1d')">1D</button>
+                </div>
+            </div>
+            
+            <div id="chart" style="flex: 1; min-height: 420px;"></div>
+
+            <div class="panel-header" style="border-top: 1px solid var(--border-color);">Multi-Timeframe Trend Heatmap</div>
+            <div class="heatmap" id="tfHeatmap">
+                <!-- Heatmap cells injected via JS -->
+            </div>
+        </section>
+
+        <!-- Right Panel: Quantitative Signal & Trade Execution Setup -->
+                <aside class="panel">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        AI Trade Architect
+                        <div class="ai-tabs" style="display: flex; gap: 5px;">
+                            <button class="tf-btn active" id="tab-smc" onclick="switchAITab('smc')">SMC</button>
+                            <button class="tf-btn" id="tab-pa" onclick="switchAITab('pa')">PA</button>
+                            <button class="tf-btn" id="tab-news" onclick="switchAITab('news')">NEWS</button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-content">
+                        <div class="signal-badge" id="aiSignal">AWAITING ENGINE</div>
+                        
+                        <div class="score-display">
+                            <span id="aiScore" class="mono score-number">--</span>
+                            <span class="score-label" id="aiModelLabel">SMC CONFIDENCE</span>
+                        </div>
+
+                        <div class="execution-card mono">
+                            <div class="exec-row">
+                                <span class="m-label">Entry Range</span>
+                                <span id="aiEntry" class="cyan font-bold">--</span>
+                            </div>
+                            <div class="exec-row">
+                                <span class="m-label">Invalidation (SL)</span>
+                                <span id="aiSL" class="bearish font-bold">--</span>
+                            </div>
+                            <div class="exec-row">
+                                <span class="m-label">Primary Target</span>
+                                <span id="aiTP1" class="bullish font-bold">--</span>
+                            </div>
+                            <div class="exec-row">
+                                <span class="m-label">Risk-to-Reward</span>
+                                <span id="aiRR" class="font-bold">--</span>
+                            </div>
+                        </div>
+
+                        <div class="panel-header" style="margin: 15px -16px 12px; padding-left: 16px;">Model Confluences</div>
+                        <ul id="aiReasons" class="confluence-list">
+                            <li>Evaluating multi-exchange data...</li>
+                        </ul>
+
+                        <!-- RESTORED: Core Indicators Snapshot -->
+                        <div class="panel-header" style="margin: 15px -16px 12px; padding-left: 16px;">Core Indicators Snapshot</div>
+                        <div class="indicator-matrix mono" id="indicatorMatrix">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </aside>
+    </main>
+
+    <script src="/static/js/terminal.js"></script>
+</body>
+</html>

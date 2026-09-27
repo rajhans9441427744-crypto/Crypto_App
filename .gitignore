@@ -1,0 +1,25 @@
+# Python environment & bytecode
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables & secrets (API keys, secrets)
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases & cache
+*.db
+*.sqlite3
+cache/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE configurations
+.vscode/
+.idea/
